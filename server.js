@@ -45,20 +45,26 @@ const User = sequelize.define('User', {
 });
 
 // Création d'un utilisateur dans la table "users"
-app.post('/users', async (req, res) => {
-  const { username, email, password } = req.body;
-  const user = await User.create({ username, email, password });
-  res.json(user);
-});
+app.post('/api/users', (req, res) => {
+    const { username, email, password } = req.body;
+    User.create({ username, email, password })
+      .then(user => {
+        res.status(201).json(user);
+      })
+      .catch(error => {
+        console.error(error);
+        res.status(500).json({ error: 'Error creating user' });
+      });
+  });
 
 // Récupération de tous les utilisateurs dans la table "users"
-app.get('/users', async (req, res) => {
+app.get('/api/users', async (req, res) => {
   const users = await User.findAll();
   res.json(users);
 });
 
 // Récupération d'un utilisateur par ID dans la table "users"
-app.get('/users/:id', async (req, res) => {
+app.get('/api/users/:id', async (req, res) => {
   const { id } = req.params;
   const user = await User.findByPk(id);
   if (user) {
@@ -69,7 +75,7 @@ app.get('/users/:id', async (req, res) => {
 });
 
 // Modification d'un utilisateur par ID dans la table "users"
-app.put('/users/:id', async (req, res) => {
+app.put('/api/users/:id', async (req, res) => {
   const { id } = req.params;
   const { username, email, password } = req.body;
   const user = await User.findByPk(id);
@@ -85,7 +91,7 @@ app.put('/users/:id', async (req, res) => {
 });
 
 // Suppression d'un utilisateur par ID dans la table "users"
-app.delete('/users/:id', async (req, res) => {
+app.delete('/api/users/:id', async (req, res) => {
   const { id } = req.params;
   const user = await User.findByPk(id);
   if (user) {
